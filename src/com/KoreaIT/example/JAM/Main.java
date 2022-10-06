@@ -48,10 +48,10 @@ public class Main {
 					sql += " SET regDate = NOW()";
 					sql += ", updateDate = NOW()";
 					// title 
-					sql += ", title = CONCAT('제목', RAND())";
-					// body
-					sql += ", `body` = CONCAT('내용', RAND());";
-
+					sql += ", title = '"+title+"'";
+					
+					sql += ", `body` = '"+body+"';";
+					
 					pstmt = conn.prepareStatement(sql);
 
 					pstmt.executeUpdate();
@@ -78,10 +78,9 @@ public class Main {
 				}
 				
 				//
-//				Article article = new Article(id,title, body);
-//				System.out.println(article);
-//				articles.add(article);
-//				lastArticleId++;
+				Article article = new Article(id,title, body);
+				articles.add(article);
+				lastArticleId++;
 				
 				
 				System.out.printf(" %d 번 글이 생성되었습니다.\n",id );
