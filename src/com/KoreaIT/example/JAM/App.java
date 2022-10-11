@@ -102,32 +102,7 @@ public class App {
 			sql.append("WHERE id = ? ",id);
 			
 			DBUtil.update(conn, sql);
-//			PreparedStatement pstmt = null;
-//
-//			try {
-//				String sql = "UPDATE article";
-//				sql += " SET updateDate = NOW()";
-//				sql += ", title = '" + title + "'";
-//				sql += ", `body` = '" + body + "'";
-//				sql += " WHERE id = " + id;
-//
-//				System.out.println(sql);
-//				
-//				pstmt = conn.prepareStatement(sql);
-//
-//				pstmt.executeUpdate();
-//
-//			} catch (SQLException e) {
-//				System.out.println("에러: " + e);
-//			} finally {
-//				try {
-//					if (pstmt != null && !pstmt.isClosed()) {
-//						pstmt.close();
-//					}
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				}
-//			}
+
 
 			System.out.printf("%d번 글이 수정 되었습니다\n", id);
 			
@@ -187,6 +162,37 @@ public class App {
 				System.out.printf("%d번 글이 삭제 되었습니다\n", id);
 				
 			}
+		// 상세보기
+		 else if (cmd.startsWith("article detail ")) {
+				int id = Integer.parseInt(cmd.split(" ")[2]);
+				
+
+				SecSql sql = new SecSql();
+				sql.append("SELECT *");
+				sql.append("FROM article");
+				sql.append("WHERE id = ? ",id);
+				
+				Map<String,Object> articleMap = DBUtil.selectRow(conn, sql);
+				
+				if(articleMap.isEmpty()) {
+					System.out.printf("%d번 게시글은 존재하지 않습니다.\n",id);
+					return;
+				}
+				System.out.printf("== %d번 게시물 상세보기 ==\n", id);
+				
+				Article article = new Article(articleMap);
+				System.out.printf("번호 : %d\n",article.id);
+				System.out.printf("작성날짜 : %s\n",article.regDate);
+				System.out.printf("수정날짜 : %s\n",article.updateDate);
+				System.out.printf("제목 : %s\n",article.title);
+				System.out.printf("내용 : %s\n",article.body);
+				
+				
+				
+				
+				//DBUtil.delete(conn, sql);
+				
+			} 
 
 	}
 }
