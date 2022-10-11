@@ -2,8 +2,6 @@ package com.KoreaIT.example.JAM;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +57,7 @@ public class App {
 	
 	private void doAction(Connection conn, Scanner sc, String cmd) {
 		
-		int lastArticleId = 0;
+		//int lastArticleId = 0;
 		
 		if (cmd.equals("article write")) {
 			System.out.println("== 게시물 작성 ==");
@@ -82,7 +80,7 @@ public class App {
 			
 
 
-			lastArticleId++;
+			//lastArticleId++;
 
 			System.out.printf("%d번 글이 생성 되었습니다\n", id);
 
@@ -147,7 +145,7 @@ public class App {
 			
 			List<Map<String, Object>> articleListMap = DBUtil.selectRows(conn, sql);
 			for(Map<String, Object> articleMap : articleListMap ) {
-				
+				articles.add(new Article(articleMap));
 			}
 
 			if (articles.size() == 0) {
