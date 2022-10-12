@@ -45,4 +45,8 @@ DESC `member`;
 
 SELECT * FROM `member`;
 
+SELECT COUNT(loginId) > 0
+FROM `member`
+WHERE loginId = 'test';
+
 
