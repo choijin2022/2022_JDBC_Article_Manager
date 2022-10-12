@@ -21,3 +21,28 @@ SET regDate = NOW(),
 updateDate = NOW(),
 title = CONCAT('제목',RAND()),
 `body` = CONCAT('내용',RAND());
+
+# member 테이블 생성
+
+CREATE TABLE `member`(
+	id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	regDate DATETIME NOT NULL,
+	updateDate DATETIME NOT NULL,
+	loginID VARCHAR(20) NOT NULL,
+	loginPw VARCHAR(50)  NOT NULL,
+	`name` VARCHAR(50) NOT NULL
+);
+
+# member data 추가
+INSERT INTO `member`
+SET regDate = NOW(),
+updateDate = NOW(),
+loginID = CONCAT('testId',RAND()),
+loginPw = CONCAT('testPw',RAND()),
+`name` = CONCAT('testName',RAND());
+
+DESC `member`;
+
+SELECT * FROM `member`;
+
+
