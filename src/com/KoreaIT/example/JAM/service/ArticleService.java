@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import com.KoreaIT.example.JAM.Article;
+import com.KoreaIT.example.JAM.container.Container;
 import com.KoreaIT.example.JAM.dao.ArticleDao;
 
 public class ArticleService {
@@ -11,7 +12,7 @@ public class ArticleService {
 	private ArticleDao articleDao;
 
 	public ArticleService(Connection conn) {
-		articleDao = new ArticleDao(conn);
+		articleDao = Container.ArticleDao(conn);
 	}
 
 	public int doWrite(String title, String body) {
