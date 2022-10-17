@@ -104,4 +104,6 @@ public class ArticleController extends Controller {
 		System.out.printf("%d번 글이 삭제 되었습니다\n", id);
 	}
 
+
+
 }
