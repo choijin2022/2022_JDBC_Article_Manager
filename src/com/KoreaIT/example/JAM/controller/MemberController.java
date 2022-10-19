@@ -7,8 +7,7 @@ import com.KoreaIT.example.JAM.service.MemberService;
 public class MemberController extends Controller {
 
 	private MemberService memberService;
-	//로그인 접속 정보를 Member로 저장하는게 맞는지?
-	Member member;
+
 	public MemberController() {
 		this.memberService = Container.memberService;
 	}
@@ -134,35 +133,33 @@ public class MemberController extends Controller {
 				System.out.println("비밀번호가 일치하지 않습니다");
 				continue;
 			}
-			
-			// 로그인 member 저장
-			// -1를 멈버의 아이디로
-			//세션 멤머 객체에 멤버 정보를 저장
-			this.member = member;
+
 			System.out.printf("%s님 환영합니다\n", member.name);
+
+			Container.session.loginedMemberId = member.id;
+			Container.session.loginedMember = member;
+
 			break;
 
 		}
-
 	}
 
 	public void showProfile(String cmd) {
-		//로그인 했는지 여부 확인
-		if (member == null) {
-			System.out.println("로그인 필요");
-			
+		if (Container.session.loginedMemberId == -1) {
+			System.out.println("로그인 상태가 아닙니다.");
+		} else {
+			System.out.println(Container.session.loginedMember.name);
 		}
-		
+	}
 
-		// 로그인 되어 있으면, 로그인 대상이 누군지 확인 ==>??
-		
-		//
-		System.out.printf("== %s 회원 정보 ==\n", member.loginId);
-		System.out.printf("번호 : %d\n", member.id);
-		System.out.printf("가입날짜 : %s\n", member.regDate);
-		System.out.printf("이름 : %s\n", member.name);
-		
-		
+	public void doLogout(String cmd) {
+		// 객체 삭제? 초기화 ??
+		// 세션의 아이디를 -1로 변경??
+
+		Container.session.loginedMemberId = -1;
+		Container.session.loginedMember = null;
+		System.out.println("로그아웃 되었습니다");
+
 	}
 
 }
