@@ -1,20 +1,17 @@
 package com.KoreaIT.example.JAM.controller;
 
-import java.sql.Connection;
 import java.util.List;
-import java.util.Scanner;
 
 import com.KoreaIT.example.JAM.Article;
+import com.KoreaIT.example.JAM.container.Container;
 import com.KoreaIT.example.JAM.service.ArticleService;
 
 public class ArticleController extends Controller {
-	
+
 	private ArticleService articleService;
-	
-	
-	public ArticleController(Connection conn, Scanner sc) {
-		super(sc);
-		articleService = new ArticleService(conn);
+
+	public ArticleController() {
+		articleService = Container.articleService;
 	}
 
 	public void doWrite(String cmd) {
@@ -31,7 +28,7 @@ public class ArticleController extends Controller {
 	}
 
 	public void showList(String cmd) {
-		
+
 		List<Article> articles = articleService.getArticles();
 
 		if (articles.size() == 0) {
@@ -47,7 +44,7 @@ public class ArticleController extends Controller {
 			System.out.printf("%d	|	%s\n", article.id, article.title);
 		}
 	}
-	
+
 	public void showDetail(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
@@ -57,15 +54,8 @@ public class ArticleController extends Controller {
 			System.out.printf("%d번 게시글은 존재하지 않습니다\n", id);
 			return;
 		}
-		
-		
-		
-		
-		
+
 		System.out.printf("== %d번 게시물 상세보기 ==\n", id);
-
-		
-
 		System.out.printf("번호 : %d\n", article.id);
 		System.out.printf("작성날짜 : %s\n", article.regDate);
 		System.out.printf("수정날짜 : %s\n", article.updateDate);
@@ -75,6 +65,14 @@ public class ArticleController extends Controller {
 
 	public void doModify(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
+
+		boolean isArticleExists = articleService.isArticleExists(id);
+
+		if (isArticleExists == false) {
+			System.out.printf("%d번 게시글은 존재하지 않습니다\n", id);
+			return;
+		}
+
 		System.out.printf("== %d번 게시물 수정 ==\n", id);
 
 		System.out.printf("수정할 제목 : ");
@@ -103,7 +101,5 @@ public class ArticleController extends Controller {
 
 		System.out.printf("%d번 글이 삭제 되었습니다\n", id);
 	}
-
-
 
 }

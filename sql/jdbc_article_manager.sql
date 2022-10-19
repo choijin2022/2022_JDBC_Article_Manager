@@ -50,3 +50,7 @@ FROM `member`
 WHERE loginId = 'test';
 
 
+SELECT loninId
+FROM `member`
+WHERE 
+
