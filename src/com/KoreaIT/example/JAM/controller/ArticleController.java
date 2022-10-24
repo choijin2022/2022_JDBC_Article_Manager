@@ -88,17 +88,25 @@ public class ArticleController extends Controller {
 			return;
 		}
 		
-		//  
 		
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
-		boolean isArticleExists = articleService.isArticleExists(id);
+		Article article = articleService.getArticle(id);
 		
-		if (isArticleExists == false) {
+		
+		if (article == null) {
 			System.out.printf("%d번 게시글은 존재하지 않습니다\n", id);
 			return;
 		}
-
+		// 수정시 권한 체크 --> 세션 아이디와 수정하려는 게시물의 회원 아이디가 일치하는지
+		// 글번호 아이디에서 회원 아이디를 가져오기
+		
+		
+		if(Container.session.loginedMemberId != article.memberId) {
+			System.out.println("해당 게시글에 대한 권한이 없습니다.");
+			return;
+		}
+		
 		System.out.printf("== %d번 게시물 수정 ==\n", id);
 
 		System.out.printf("수정할 제목 : ");
@@ -112,12 +120,12 @@ public class ArticleController extends Controller {
 	}
 
 	public void doDelete(String cmd) {
-
+		
 		if (Container.session.isLogined() == false) {
 			System.out.println("로그인 후 이용해주세요");
 			return;
 		}
-
+    
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
 		boolean isArticleExists = articleService.isArticleExists(id);
