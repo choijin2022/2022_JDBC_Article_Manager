@@ -14,7 +14,7 @@ public class ArticleDao {
 	public ArticleDao() {
 	}
 
-	public int doWrite(String title, String body) {
+	public int doWrite(String title, String body, int memberId) {
 		SecSql sql = new SecSql();
 
 		sql.append("INSERT INTO article");
@@ -22,6 +22,9 @@ public class ArticleDao {
 		sql.append(", updateDate = NOW()");
 		sql.append(", title = ?", title);
 		sql.append(", `body` = ?", body);
+		sql.append(", memberId = ?", memberId);
+		sql.append(", hit = 0");
+
 
 		return DBUtil.insert(Container.conn, sql);
 	}
@@ -60,9 +63,11 @@ public class ArticleDao {
 	public Article getArticle(int id) {
 		SecSql sql = new SecSql();
 
-		sql.append("SELECT *");
-		sql.append("FROM article");
-		sql.append("WHERE id = ?", id);
+		sql.append("SELECT A.*, M.name AS writerName");
+		sql.append("FROM  article AS A");
+		sql.append("JOIN `member` AS M");
+		sql.append("ON M.id = A.memberId");
+		sql.append("WHERE A.id = ?", id);
 
 		Map<String, Object> articleMap = DBUtil.selectRow(Container.conn, sql);
 
@@ -76,10 +81,18 @@ public class ArticleDao {
 
 		SecSql sql = new SecSql();
 
-		sql.append("SELECT *");
-		sql.append("FROM article");
-		sql.append("ORDER BY id DESC;");
+		sql.append("SELECT A.*, M.name AS writerName");
+		sql.append("FROM  article AS A");
+		sql.append("JOIN `member` AS M");
+		sql.append("ON M.id = A.memberId");
+		sql.append("ORDER BY id DESC");
+		
+		
+		
+		
+		
 
+		
 		List<Map<String, Object>> articleListMap = DBUtil.selectRows(Container.conn, sql);
 
 		List<Article> articles = new ArrayList<>();
@@ -88,5 +101,14 @@ public class ArticleDao {
 			articles.add(new Article(articleMap));
 		}
 		return articles;
+	}
+
+	public static void increaseHit(int id) {
+		SecSql sql =  new SecSql();
+		sql.append("UPDATE article");
+		sql.append("SET hit = hit+1");
+		sql.append("WHERE id = 1");
+		
+		DBUtil.insert(Container.conn, sql);
 	}
 }

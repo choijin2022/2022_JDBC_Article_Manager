@@ -15,19 +15,24 @@ public class ArticleController extends Controller {
 	}
 
 	public void doWrite(String cmd) {
-		// 로그인 여부 확인
-		if (Container.session.loginedMemberId == -1) {
-			System.out.println("로그인이 필요합니다.");
+
+		if (Container.session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요");
 			return;
 		}
+		
+		
 		System.out.println("== 게시물 작성 ==");
 
 		System.out.printf("제목 : ");
 		String title = sc.nextLine();
 		System.out.printf("내용 : ");
 		String body = sc.nextLine();
+		
+		int memberId = Container.session.loginedMemberId;
+		
 
-		int id = articleService.doWrite(title, body);
+		int id = articleService.doWrite(title, body, memberId);
 
 		System.out.printf("%d번 글이 생성 되었습니다\n", id);
 	}
@@ -43,16 +48,19 @@ public class ArticleController extends Controller {
 
 		System.out.println("== 게시물 리스트 ==");
 
-		System.out.println("번호	|	제목");
+		System.out.println("번호	|	제목	|	작성자	|	조회수");
 
 		for (Article article : articles) {
-			System.out.printf("%d	|	%s\n", article.id, article.title);
+			System.out.printf("%d	|	%s	|	%s	|	%d\n", article.id, article.title, article.writerName, article.hit);
+			
 		}
 	}
 
 	public void showDetail(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
-
+		
+		articleService.increaseHit(id);
+		
 		Article article = articleService.getArticle(id);
 
 		if (article == null) {
@@ -66,19 +74,26 @@ public class ArticleController extends Controller {
 		System.out.printf("수정날짜 : %s\n", article.updateDate);
 		System.out.printf("제목 : %s\n", article.title);
 		System.out.printf("내용 : %s\n", article.body);
+		System.out.printf("작성자 : %s\n", article.writerName);
+		System.out.printf("조회수 : %d\n", article.hit);
+		
+		// 조회수 ++
+		
 	}
 
 	public void doModify(String cmd) {
-		// 로그인 여부 확인
-		if (Container.session.loginedMemberId == -1) {
-			System.out.println("로그인이 필요합니다.");
+
+		if (Container.session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요");
 			return;
 		}
-
+		
+		//  
+		
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
 		boolean isArticleExists = articleService.isArticleExists(id);
-
+		
 		if (isArticleExists == false) {
 			System.out.printf("%d번 게시글은 존재하지 않습니다\n", id);
 			return;
@@ -97,9 +112,9 @@ public class ArticleController extends Controller {
 	}
 
 	public void doDelete(String cmd) {
-		// 로그인 여부 확인
-		if (Container.session.loginedMemberId == -1) {
-			System.out.println("로그인이 필요합니다.");
+
+		if (Container.session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요");
 			return;
 		}
 

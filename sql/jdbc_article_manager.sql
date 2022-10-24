@@ -9,7 +9,8 @@ CREATE TABLE article(
 	regDate DATETIME NOT NULL,
 	updateDate DATETIME NOT NULL,
 	title VARCHAR(200) NOT NULL,
-	`body` TEXT NOT NULL
+	`body` TEXT NOT NULL,
+	memberId INT UNSIGNED NOT NULL 
 );
 
 SELECT * FROM article;
@@ -50,7 +51,11 @@ FROM `member`
 WHERE loginId = 'test';
 
 
-SELECT loninId
-FROM `member`
-WHERE 
+SELECT A.*, M.name AS writerName
+FROM  article AS A
+JOIN `member` AS M
+ON M.id = A.memberId
+WHERE A.memberId =1;
+
+
 

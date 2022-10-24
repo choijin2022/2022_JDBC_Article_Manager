@@ -13,8 +13,8 @@ public class ArticleService {
 		articleDao = Container.articleDao;
 	}
 
-	public int doWrite(String title, String body) {
-		return articleDao.doWrite(title, body);
+	public int doWrite(String title, String body, int memberId) {
+		return articleDao.doWrite(title, body, memberId);
 	}
 
 	public int doModify(int id, String title, String body) {
@@ -35,6 +35,11 @@ public class ArticleService {
 
 	public List<Article> getArticles() {
 		return articleDao.getArticles();
+	}
+
+	public void increaseHit(int id) {
+		articleDao.increaseHit(id);
+		
 	}
 
 }
