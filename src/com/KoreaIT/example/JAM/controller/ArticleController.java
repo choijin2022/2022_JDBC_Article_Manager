@@ -20,26 +20,39 @@ public class ArticleController extends Controller {
 			System.out.println("로그인 후 이용해주세요");
 			return;
 		}
-		
-		
+
 		System.out.println("== 게시물 작성 ==");
 
 		System.out.printf("제목 : ");
 		String title = sc.nextLine();
 		System.out.printf("내용 : ");
 		String body = sc.nextLine();
-		
-		int memberId = Container.session.loginedMemberId;
-		
 
-		int id = articleService.doWrite(title, body, memberId);
+		int memberId = Container.session.loginedMemberId;
+
+		int id = articleService.doWrite(memberId, title, body);
 
 		System.out.printf("%d번 글이 생성 되었습니다\n", id);
 	}
 
 	public void showList(String cmd) {
 
-		List<Article> articles = articleService.getArticles();
+		String[] cmdBits = cmd.split(" ");
+		
+		int page = 1;
+		String searchKeyword = "";
+		
+		if(cmdBits.length >= 3) {
+			page = Integer.parseInt(cmdBits[2]);
+		}
+		
+		if(cmdBits.length >= 4) {
+			searchKeyword = cmdBits[3];
+		}
+		
+		int itemsInAPage = 10;
+		
+		List<Article> articles = articleService.getForPrintArticles(page, itemsInAPage, searchKeyword);
 
 		if (articles.size() == 0) {
 			System.out.println("게시물이 없습니다");
@@ -48,19 +61,19 @@ public class ArticleController extends Controller {
 
 		System.out.println("== 게시물 리스트 ==");
 
-		System.out.println("번호	|	제목	|	작성자	|	조회수");
+		System.out.println("번호	|	제목	|	작성자	|	조회	|	작성일");
 
 		for (Article article : articles) {
-			System.out.printf("%d	|	%s	|	%s	|	%d\n", article.id, article.title, article.writerName, article.hit);
-			
+			System.out.printf("%d	|	%s	|	%s	|	%d	|	%s\n", article.id, article.title, article.writerName,
+					article.hit, article.updateDate);
 		}
 	}
 
 	public void showDetail(String cmd) {
 		int id = Integer.parseInt(cmd.split(" ")[2]);
-		
+
 		articleService.increaseHit(id);
-		
+
 		Article article = articleService.getArticle(id);
 
 		if (article == null) {
@@ -72,13 +85,10 @@ public class ArticleController extends Controller {
 		System.out.printf("번호 : %d\n", article.id);
 		System.out.printf("작성날짜 : %s\n", article.regDate);
 		System.out.printf("수정날짜 : %s\n", article.updateDate);
+		System.out.printf("작성자 : %s\n", article.writerName);
 		System.out.printf("제목 : %s\n", article.title);
 		System.out.printf("내용 : %s\n", article.body);
-		System.out.printf("작성자 : %s\n", article.writerName);
-		System.out.printf("조회수 : %d\n", article.hit);
-		
-		// 조회수 ++
-		
+		System.out.printf("조회수 : %s\n", article.hit);
 	}
 
 	public void doModify(String cmd) {
@@ -87,26 +97,21 @@ public class ArticleController extends Controller {
 			System.out.println("로그인 후 이용해주세요");
 			return;
 		}
-		
-		
+
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
 		Article article = articleService.getArticle(id);
-		
-		
+
 		if (article == null) {
 			System.out.printf("%d번 게시글은 존재하지 않습니다\n", id);
 			return;
 		}
-		// 수정시 권한 체크 --> 세션 아이디와 수정하려는 게시물의 회원 아이디가 일치하는지
-		// 글번호 아이디에서 회원 아이디를 가져오기
-		
-		
-		if(Container.session.loginedMemberId != article.memberId) {
-			System.out.println("해당 게시글에 대한 권한이 없습니다.");
+
+		if (article.memberId != Container.session.loginedMemberId) {
+			System.out.println("해당 게시글에 대한 권한이 없습니다");
 			return;
 		}
-		
+
 		System.out.printf("== %d번 게시물 수정 ==\n", id);
 
 		System.out.printf("수정할 제목 : ");
@@ -120,18 +125,23 @@ public class ArticleController extends Controller {
 	}
 
 	public void doDelete(String cmd) {
-		
+
 		if (Container.session.isLogined() == false) {
 			System.out.println("로그인 후 이용해주세요");
 			return;
 		}
-    
+
 		int id = Integer.parseInt(cmd.split(" ")[2]);
 
-		boolean isArticleExists = articleService.isArticleExists(id);
+		Article article = articleService.getArticle(id);
 
-		if (isArticleExists == false) {
+		if (article == null) {
 			System.out.printf("%d번 게시글은 존재하지 않습니다\n", id);
+			return;
+		}
+
+		if (article.memberId != Container.session.loginedMemberId) {
+			System.out.println("해당 게시글에 대한 권한이 없습니다");
 			return;
 		}
 
